@@ -1,16 +1,25 @@
-export default function Home() {
+import { GetServerSideProps } from 'next';
+import Link from 'next/link';
+import Header from '../components/Header';
+import DogCard from '../components/DogCard';
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const res = await fetch('https://dog.ceo/api/breeds/list/all');
+  const data = await res.json();
+  const breeds = Object.keys(data.message);
+  return { props: { breeds } };
+}
+
+export default function HomePage({ breeds }) {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <div className="container mx-auto px-4 py-16">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-6">
-            Build me a site
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            A modern marketing website: build me a site about dogs
-          </p>
-        </div>
+    <div className='h-screen bg-gray-100'>
+      <Header />
+      <div className='flex flex-wrap justify-center p-4'>
+        {breeds.map((breed, index) => <DogCard key={index} breed={breed} />)}
       </div>
-    </main>
-  )
+      <div className='text-center my-4'>
+        <Link href='/about'>About Us</Link>
+      </div>
+    </div>
+  );
 }
